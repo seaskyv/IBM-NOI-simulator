@@ -1,6 +1,7 @@
 # IBM-NOI-simulator
 IBM Netcool Operator Insight event simulator.
-This simulator written in Python, send simulated event to Netcool/OMNIBus socket probe.
+This simulator written in Python, send simulated event to Netcool/OMNIBus socket probe. 
+This script will simulate Related Event and Seasonal Event, also has the capabiltiy to add noisy event to prove RE and SE concept.
 
 ## Prerequisites
 Python, IBM Netcool/OMNIBus socket probe
