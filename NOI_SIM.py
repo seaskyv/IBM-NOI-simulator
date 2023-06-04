@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import socket
 import sys
@@ -372,65 +372,68 @@ def N(n,m):
 	aN.NEventG()
 	return
 
+def main():
+	parser = argparse.ArgumentParser(prog=__file__,description='NOI simulator program')
+	THelpLine = ['R : genereate related event;', 'S : genereate seasonal event;', 'N : genereae normal random event']
+	#parser.add_argument('-t','--type',choices=['R','S','N'],required=True,dest='typeName',help='\n'.join(THelpLine))
+	parser.add_argument('-t','--type',choices=['R','S','N'],dest='typeName',help='\n'.join(THelpLine))
+	parser.add_argument('-n','--number',nargs='?',default=0,help=' numbers of event (group) to be genereated',dest='number')
+	parser.add_argument('-m','--mulplex',nargs='?',default=0,help=' numbers of event per node to be prepared',dest='mulplex')
+	parser.add_argument('-e','--event',nargs='?',choices=['A','B','C','D','E'],help='Event to be genereate for Seasonal',dest='event')
+	parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+	myInput = parser.parse_args()
 
-parser = argparse.ArgumentParser(prog=__file__,description='NOI simulator program')
-THelpLine = ['R : genereate related event;', 'S : genereate seasonal event;', 'N : genereae normal random event']
-#parser.add_argument('-t','--type',choices=['R','S','N'],required=True,dest='typeName',help='\n'.join(THelpLine))
-parser.add_argument('-t','--type',choices=['R','S','N'],dest='typeName',help='\n'.join(THelpLine))
-parser.add_argument('-n','--number',nargs='?',default=0,help=' numbers of event (group) to be genereated',dest='number')
-parser.add_argument('-m','--mulplex',nargs='?',default=0,help=' numbers of event per node to be prepared',dest='mulplex')
-parser.add_argument('-e','--event',nargs='?',choices=['A','B','C','D','E'],help='Event to be genereate for Seasonal',dest='event')
-parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-myInput = parser.parse_args()
+	if myInput.typeName == 'R' and not myInput.number:
+		print "error : number is requried for R type\n"
+		parser.print_help()
+		sys.exit(1)
+	if myInput.typeName == 'N' and not myInput.mulplex:
+		print "error : mulplex is requried for R type\n"
+		parser.print_help()
+		sys.exit(1)
+	if myInput.typeName == 'N' and not myInput.number:
+		print "error : number is requried for N type\n"
+		parser.print_help()
+		sys.exit(1)
+	if myInput.typeName == 'S' and not myInput.event:
+		print "error : event ID is requried for S type\n"
+		parser.print_help()
+		sys.exit(1)
 
-if myInput.typeName == 'R' and not myInput.number:
-	print "error : number is requried for R type\n"
-	parser.print_help()
-	sys.exit(1)
-if myInput.typeName == 'N' and not myInput.mulplex:
-	print "error : mulplex is requried for R type\n"
-	parser.print_help()
-	sys.exit(1)
-if myInput.typeName == 'N' and not myInput.number:
-	print "error : number is requried for N type\n"
-	parser.print_help()
-	sys.exit(1)
-if myInput.typeName == 'S' and not myInput.event:
-	print "error : event ID is requried for S type\n"
-	parser.print_help()
-	sys.exit(1)
+	logFile = os.path.dirname(os.path.abspath(__file__)) + '/' +os.path.basename(__file__) + ".log"
+	if not os.path.exists(logFile):
+		os.system("touch " + logFile)
+	logSize = os.path.getsize(logFile)
+	if logSize > 1024*1024*20:
+		os.system("mv " + logFile + " " + logFile + "_old")
+		os.system("> " + logFile)
+	logging.basicConfig(level=logging.DEBUG,format='%(asctime)s [%(levelname)s] [%(process)d] %(message)s',filename = logFile)
 
-logFile = os.path.dirname(os.path.abspath(__file__)) + '/' +os.path.basename(__file__) + ".log"
-if not os.path.exists(logFile):
-	os.system("touch " + logFile)
-logSize = os.path.getsize(logFile)
-if logSize > 1024*1024*20:
-	os.system("mv " + logFile + " " + logFile + "_old")
-	os.system("> " + logFile)
-logging.basicConfig(level=logging.DEBUG,format='%(asctime)s [%(levelname)s] [%(process)d] %(message)s',filename = logFile)
-
-type = myInput.typeName
-number = myInput.number
-event = myInput.event
-mulplex = myInput.mulplex
+	type = myInput.typeName
+	number = myInput.number
+	event = myInput.event
+	mulplex = myInput.mulplex
 
 
-if type == 'R':
-	logging.info("will genreate " + type + " for " + number + " times") 
-	RE(number)
-elif type == 'S':
-	logging.info("will genreate " + type)
-	SE(event)
-elif type == 'N':
-	logging.info("will genreate " + type + " for " + number + " times") 
-	N(number,mulplex)
-else :
-	logging.info("option input for t is " + type + " which is not supported!\n")
-	exit()
+	if type == 'R':
+		logging.info("will genreate " + type + " for " + number + " times") 
+		RE(number)
+	elif type == 'S':
+		logging.info("will genreate " + type)
+		SE(event)
+	elif type == 'N':
+		logging.info("will genreate " + type + " for " + number + " times") 
+		N(number,mulplex)
+	else :
+		logging.info("option input for t is " + type + " which is not supported!\n")
+		exit()
 
-#print("Create new socket...\n")
-#print("Generating Related event...\n")
-#print("Generate random event...\n")
+	#print("Create new socket...\n")
+	#print("Generating Related event...\n")
+	#print("Generate random event...\n")
+	
+if __name__ == '__main__':
+    main()
 
 
 
